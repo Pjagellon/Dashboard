@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard – Sign Wizard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <h1>Admin Dashboard</h1>
+    <span class="user">Staff/Admin</span>
+  </header>
+
+  <div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="section">
+        <h3>Navigation</h3>
+        <ul>
+          <li class="has-sub">
+            Dashboard
+            <ul class="sub-menu">
+              <li><a href="test1.html" data-target="accounts">Test1</a></li>
+              <li><a href="test2.html" data-target="accounts">Test2</a></li>
+              <li><a href="test3.html" data-target="accounts">Test3</a></li>
+              <li class="has-sub">
+                <ul class="sub-menu">
+                  <li><a href="variation1.html" data-target="accounts">Variation 1</a></li>
+                  <li><a href="variation2.html" data-target="accounts">Variation 2</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="profile.html" data-target="accounts">SWGA Profile</a></li>
+          <li><a href="structure.html" data-target="accounts">Organizational Structure</a></li>
+          <li><a href="faqs.html" data-target="accounts">FAQ's</a></li>
+          <li><a href="privacy.html" data-target="accounts">Data Privacy Notices</a></li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>Modules</h3>
+        <ul>
+          <li class="has-sub">
+            <button class="tab-btn active" data-tab="accounts">Account Management</button>
+            <ul class="sub-menu">
+              <li><a href="create-account.html" data-target="accounts">Create Staff/Admin Account</a></li>
+              <li><a href="edit-account.html" data-target="accounts">Edit Customer or Staff Account</a></li>
+            </ul>
+          </li>
+          <li class="has-sub">
+            <button class="tab-btn" data-tab="inquiry">Inquiry Module</button>
+            <ul class="sub-menu">
+              <li><a href="live-chat.html" data-target="inquiry">Live Chat: Respond to customer inquiries</a></li>
+            </ul>
+          </li>
+          <li class="has-sub">
+            <button class="tab-btn" data-tab="orders">Ordering Module</button>
+            <ul class="sub-menu">
+              <li><a href="approve-orders.html" data-target="orders">Approve or Reject Orders</a></li>
+            </ul>
+          </li>
+          <li class="has-sub">
+            <button class="tab-btn" data-tab="customers">Customer Management & Website Content</button>
+            <ul class="sub-menu">
+              <li><a href="edit-front.html" data-target="customers">Edit Front Page Content</a></li>
+              <li><a href="manage-services.html" data-target="customers">Manage Services (Add/Remove)</a></li>
+              <li><a href="design-templates.html" data-target="customers">Provide Design Templates</a></li>
+            </ul>
+          </li>
+          <li class="has-sub">
+            <button class="tab-btn" data-tab="analytics">Analytics & Reports</button>
+            <ul class="sub-menu">
+              <li><a href="sales-summary.html" data-target="analytics">Sales Summary</a></li>
+              <li><a href="popular-printing.html" data-target="analytics">Popular Printing Services</a></li>
+              <li><a href="generate-reports.html" data-target="analytics">Generate Various Reports</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <section id="accounts" class="tab-content active">
+        <h2>Account Management</h2>
+        <iframe src="create-account.html"></iframe>
+      </section>
+
+      <section id="inquiry" class="tab-content">
+        <h2>Inquiry Module</h2>
+        <iframe src="live-chat.html"></iframe>
+      </section>
+
+      <section id="orders" class="tab-content">
+        <h2>Ordering Module</h2>
+        <iframe src="approve-orders.html"></iframe>
+      </section>
+
+      <section id="customers" class="tab-content">
+        <h2>Customer Management & Website Content</h2>
+        <iframe src="edit-front.html"></iframe>
+      </section>
+
+      <section id="analytics" class="tab-content">
+        <h2>Analytics & Reports</h2>
+        <iframe src="sales-summary.html"></iframe>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
