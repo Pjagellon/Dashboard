@@ -1,0 +1,5 @@
+/* additionals/css/chatbot-admin.css */
+body { font-family: Inter, system-ui, Arial; background: linear-gradient(90deg,#7b68ee,#a084dc); color:#fff; padding:20px; }
+h1{margin:10px 0}
+a{color:#fff}
+table{border-collapse:collapse}
