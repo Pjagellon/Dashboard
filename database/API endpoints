@@ -1,0 +1,15 @@
+<?php
+// api/get_faq.php
+include_once(__DIR__ . '/../database/db_connect.php');
+header('Content-Type: application/json');
+
+$language = isset($_GET['lang']) ? $conn->real_escape_string($_GET['lang']) : null;
+$sql = "SELECT * FROM tbl_faq";
+if ($language) {
+    $sql .= " WHERE language = '{$language}'";
+}
+$sql .= " ORDER BY id DESC";
+$res = $conn->query($sql);
+$out = [];
+while ($row = $res->fetch_assoc()) $out[] = $row;
+echo json_encode($out);
