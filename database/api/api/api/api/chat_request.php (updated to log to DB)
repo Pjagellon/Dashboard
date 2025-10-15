@@ -1,0 +1,49 @@
+<?php
+// api/chat_request.php
+include_once(__DIR__ . '/../database/db_connect.php');
+header('Content-Type: application/json');
+
+// Support both JSON body and multipart/form-data with 'payload'
+$payload = null;
+if(!empty($_POST['payload'])) {
+    $payload = json_decode($_POST['payload'], true);
+} else {
+    $raw = file_get_contents('php://input');
+    $payload = $raw ? json_decode($raw, true) : null;
+}
+
+$message = isset($payload['message']) ? trim($payload['message']) : '';
+$lang = $payload['lang'] ?? 'en';
+$user = $payload['user'] ?? 'guest';
+
+// Save uploaded files if present (you can customize)
+$files_out = [];
+foreach($_FILES as $k=>$f){
+    // Example: move to /uploads/ (ensure directory exists & permissions)
+    $target_dir = __DIR__ . '/../uploads/';
+    if(!is_dir($target_dir)) mkdir($target_dir,0755,true);
+    $safe = basename($f['name']);
+    $dest = $target_dir . $safe;
+    move_uploaded_file($f['tmp_name'], $dest);
+    $files_out[] = ['name'=>$safe,'url'=>'/uploads/'.$safe,'type'=>$f['type']];
+}
+
+// Basic keyword FAQ lookup
+$response_text = "Server: Sorry, I can’t fully answer that — a human will follow up.";
+
+$stmt = $conn->prepare("SELECT answer FROM tbl_faq WHERE LOWER(question) LIKE CONCAT('%', ?, '%') LIMIT 1");
+$lower = mb_strtolower($message, 'UTF-8');
+$stmt->bind_param("s", $lower);
+$stmt->execute();
+$res = $stmt->get_result();
+if($row = $res->fetch_assoc()){
+    $response_text = $row['answer'];
+}
+
+// Log conversation
+$ins = $conn->prepare("INSERT INTO tbl_chat_history (user_id, message, response) VALUES (?, ?, ?)");
+$ins->bind_param("sss", $user, $message, $response_text);
+$ins->execute();
+
+// Return response
+echo json_encode(['answer'=>$response_text, 'files'=>$files_out, 'lang'=>$lang]);
