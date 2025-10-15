@@ -1,0 +1,9 @@
+<?php
+// create_admin.php (run once, then delete)
+include 'database/db_connect.php';
+$u='admin';
+$p = password_hash('YourSecurePassword', PASSWORD_DEFAULT);
+$stmt = $conn->prepare("INSERT INTO tbl_admin (username,password) VALUES (?,?)");
+$stmt->bind_param("ss",$u,$p);
+$stmt->execute();
+echo "Created admin id: " . $stmt->insert_id;
