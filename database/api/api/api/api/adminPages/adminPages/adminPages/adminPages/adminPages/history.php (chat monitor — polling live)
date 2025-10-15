@@ -1,0 +1,48 @@
+<?php
+session_start();
+if(!isset($_SESSION['admin'])) { header('Location: login.php'); exit; }
+?>
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Chat History</title>
+<link rel="stylesheet" href="../additionals/css/chatbot-admin.css">
+<style> table{background:#fff;color:#000;width:100%} td,th{padding:8px;border-bottom:1px solid #ddd;} </style>
+</head>
+<body>
+  <h1>Chat History</h1>
+  <p><a href="dashboard.php">Back</a></p>
+  <p>
+    <button id="refreshBtn">Refresh</button>
+    <button id="autoBtn">Start Live</button>
+    Show last <input id="limitInput" type="number" value="100" style="width:80px">
+  </p>
+  <table id="histTable"><thead><tr><th>Time</th><th>User</th><th>Message</th><th>Response</th></tr></thead><tbody></tbody></table>
+
+<script>
+let interval = null;
+async function loadHistory(){
+  const lim = document.getElementById('limitInput').value || 200;
+  const res = await fetch('../api/get_history.php?limit=' + encodeURIComponent(lim));
+  const data = await res.json();
+  const tbody = document.querySelector('#histTable tbody');
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${r.created_at}</td>
+      <td>${escapeHtml(r.user_id)}</td>
+      <td>${escapeHtml(r.message)}</td>
+      <td>${escapeHtml(r.response)}</td>
+    </tr>
+  `).join('');
+}
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+document.getElementById('refreshBtn').addEventListener('click', loadHistory);
+document.getElementById('autoBtn').addEventListener('click', function(){
+  if(interval){ clearInterval(interval); interval=null; this.textContent='Start Live'; }
+  else { interval = setInterval(loadHistory,3000); this.textContent='Stop Live'; loadHistory(); }
+});
+
+loadHistory();
+</script>
+</body>
+</html>
