@@ -1,0 +1,21 @@
+CREATE TABLE tbl_admin (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100),
+  password VARCHAR(255)
+);
+
+CREATE TABLE tbl_faq (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question TEXT,
+  answer TEXT,
+  language VARCHAR(20) DEFAULT 'English',
+  date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tbl_chat_history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(50),
+  message TEXT,
+  response TEXT,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
