@@ -1,0 +1,103 @@
+<?php
+session_start();
+if(!isset($_SESSION['admin'])) { header('Location: login.php'); exit; }
+?>
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>FAQ Management</title>
+<link rel="stylesheet" href="../additionals/css/chatbot-admin.css">
+<style> .actions button{margin-right:6px} textarea{width:100%;height:80px} </style>
+</head>
+<body>
+  <h1>FAQ Management</h1>
+  <p><a href="dashboard.php">Back</a> | <a href="logout.php">Logout</a></p>
+
+  <section id="editor">
+    <h3>Add / Edit FAQ</h3>
+    <input id="faqId" type="hidden">
+    <label>Language:
+      <select id="faqLang"><option value="en">EN</option><option value="ph">PH</option></select>
+    </label><br><br>
+    <label>Question:<br><input id="faqQ" style="width:100%"></label><br><br>
+    <label>Answer:<br><textarea id="faqA"></textarea></label><br>
+    <div class="actions">
+      <button id="saveBtn">Save</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </section>
+
+  <hr>
+
+  <section>
+    <h3>Existing FAQs</h3>
+    <table id="faqTable" border="1" cellpadding="6" cellspacing="0" style="width:100%;background:#fff;color:#000">
+      <thead><tr><th>ID</th><th>Lang</th><th>Question</th><th>Answer</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+<script>
+async function loadFAQs(){
+  const res = await fetch('../api/get_faq.php');
+  const faqs = await res.json();
+  const tbody = document.querySelector('#faqTable tbody');
+  tbody.innerHTML = faqs.map(f => `
+    <tr>
+      <td>${f.id}</td>
+      <td>${f.language}</td>
+      <td>${escapeHtml(f.question)}</td>
+      <td>${escapeHtml(f.answer)}</td>
+      <td>
+        <button onclick="editFAQ(${f.id}, ${JSON.stringify(f.language)}, ${JSON.stringify(f.question)}, ${JSON.stringify(f.answer)})">Edit</button>
+        <button onclick="deleteFAQ(${f.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function editFAQ(id, lang, q, a){
+  document.getElementById('faqId').value = id;
+  document.getElementById('faqLang').value = lang;
+  document.getElementById('faqQ').value = q;
+  document.getElementById('faqA').value = a;
+  window.scrollTo(0,0);
+}
+
+document.getElementById('resetBtn').addEventListener('click', ()=> {
+  document.getElementById('faqId').value = '';
+  document.getElementById('faqLang').value = 'en';
+  document.getElementById('faqQ').value = '';
+  document.getElementById('faqA').value = '';
+});
+
+document.getElementById('saveBtn').addEventListener('click', async ()=>{
+  const id = document.getElementById('faqId').value;
+  const payload = { question: document.getElementById('faqQ').value.trim(), answer: document.getElementById('faqA').value.trim(), language: document.getElementById('faqLang').value };
+  if(!payload.question || !payload.answer){ alert('Question and answer required'); return; }
+  if(id){
+    payload.id = id;
+    const res = await fetch('../api/update_faq.php', { method:'POST', body: JSON.stringify(payload) });
+    const d = await res.json();
+    if(d.success){ alert('Updated'); loadFAQs(); document.getElementById('resetBtn').click(); }
+    else alert('Error updating');
+  } else {
+    const res = await fetch('../api/add_faq.php', { method:'POST', body: JSON.stringify(payload) });
+    const d = await res.json();
+    if(d.success){ alert('Added'); loadFAQs(); document.getElementById('resetBtn').click(); }
+    else alert('Error adding');
+  }
+});
+
+async function deleteFAQ(id){
+  if(!confirm('Delete this FAQ?')) return;
+  const res = await fetch('../api/delete_faq.php', { method:'POST', body: JSON.stringify({id}) });
+  const d = await res.json();
+  if(d.success){ alert('Deleted'); loadFAQs(); } else alert('Error deleting');
+}
+
+loadFAQs();
+</script>
+</body>
+</html>
